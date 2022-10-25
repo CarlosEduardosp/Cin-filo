@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <link rel="canonical" href="https://getbootstrap.com/docs/3.3/examples/jumbotron-narrow/">
+
+    <title>Homepage - Kadu</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static',
+    filename='css/bootstrap.min.css'  ) }}  " rel="stylesheet">
+
+
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" class="active"><a href="{{url_for('home')}}">Inicio</a></li>
+            <li role="presentation"><a href="{{url_for('sobre')}}">Sobre</a></li>
+            <li role="presentation"><a href="{{url_for('contato')}}">Contato</a></li>
+
+          </ul>
+        </nav>
+        <h3 class="text-muted">Cinéfilo - A Magia do Cinema em Você</h3>
+      </div>
+
+        <div >
+
+        <form class="form-inline" action="{{url_for('home')}}" method='POST'>
+            <div class="form-group mx-sm-3 mb-2">
+            <h3 class="text-muted"></h3>
+              <h3>Nome de Usuário:
+            <input type="text" class="form-control" name="nome" placeholder="Digite seu nome de usuário aqui">
+                <button type="submit" class="btn btn-primary"  required>Iniciar</button></h3>
+            </div>
+        </form>
+      </div>
+
+      <div class="jumbotron" >
+
+        <h1>{{nome}}, Sabe qual é o filme? </h1>
+        <br> <img src="{{imagem['imagem']}}" class="img-thumbnail" alt="Este filme não possui imagem disponível." style='float:right' width="200"><br>
+        <p class="lead">{{sinopse}}
+
+        <p></p>
+
+        <form class="form-inline" action="{{url_for('home')}}" method='POST'>
+            <div class="form-group mx-sm-3 mb-2">
+            <h3 class="text-muted">Sobre Qual Filme é esta Sinopse?</h3>
+            <input type="text" class="form-control" name="resposta" placeholder="Resposta">
+            <button type="submit" class="btn btn-primary" required>Confirmar Resposta ou Avançar</button>
+              <h6>* coloque as palavras com seus respectivos acentos ortográficos.</h6>
+             </div>
+
+
+        </form>
+
+        <h6 style="float:right">* Imagem da sinopse anterior.</h6>
+
+
+        <br>
+        <h4>{{ganhador.title()}}</h4>
+
+
+      </div>
+
+
+
+      <div class="row marketing">
+        <div class="col-lg-6">
+          <h4>Cinéfilo 1.0</h4>
+          <p>Leia a sinopse do filme e tente acertar o seu nome.</p>
+
+          <h4>Ferramentas:</h4>
+          <p>Criado em Flask com Python, Ultilizando biblioteca de Wabscraping para buscar as informações sobre os filmes.
+            Bootstrap - para Front-End, e Firebase como Banco de dados.</p>
+
+          </div>
+
+        <div class="col-lg-6">
+          <h4>Site usado para buscar as informações:</h4>
+          <p><a href="https://www.adorocinema.com/">AdoroCinema</a></p>
+
+          <h4>Sobre a Aplicação:</h4>
+          <p>Desenvolvido por Carlos Eduardo, Programador Python.</p>
+
+         </div>
+      </div>
+
+      <footer class="footer">
+        <p>&copy; 2022 Company.</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+
+  <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"
+    ></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+  </body>
+</html>

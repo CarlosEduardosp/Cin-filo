@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <link rel="canonical" href="https://getbootstrap.com/docs/3.3/examples/jumbotron-narrow/">
+
+    <title>Homepage - Kadu</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static',
+    filename='css/bootstrap.min.css'  ) }}  " rel="stylesheet">
+
+
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="header clearfix">
+        <nav>
+           <ul class="nav nav-pills pull-right">
+            <li role="presentation" class="active"><a href="{{url_for('home')}}">Inicio</a></li>
+            <li role="presentation"><a href="{{url_for('sobre')}}">Sobre</a></li>
+            <li role="presentation"><a href="{{url_for('contato')}}">Contato</a></li>
+            <li role="presentation"><a href="{{url_for('filme')}}">Filmes</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Cinéfilo - A Magia do Cinema em Você</h3>
+      </div>
+
+    <h2 style="text-align: center;">Lista de Filmes</h2><hr>
+
+<div class="row">
+	{% for i in range(9) %}
+		<div class="col-md-4">
+			<div class="card" style="width: 18rem;">
+  			<img src="" class="card-img-top" alt="...">
+  			<div class="card-body">
+    		<h5 class="card-title text-dark">{{filmes[i].text}}</h5>
+    		<p class="card-text text-dark">{{sinopse[i].text}}</p>
+    		<h4 class="text-dark">Nota avaliação <span class="badge bg-dark text-white">None</span></h4>
+  			</div>
+			</div>
+		</div>
+	{% endfor %}
+
+</div>
+  <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"
+    ></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
+  </body>
+</html>
