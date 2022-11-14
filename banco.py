@@ -1,31 +1,29 @@
 import requests
 import json
+from banco_sql import db, user
+
 
 
 def incluirfilmenobd(filme_escolhido):
-    link = "https://cinefilo-938c9-default-rtdb.firebaseio.com/-NEmjtP_bkZLZfkK0yEL"
-    filme = {'nome': f'{filme_escolhido}'}
-    requests.patch(f"{link}/.json", data=json.dumps(filme))
+    pessoa = user(filme_escolhido)
+    db.session.add(pessoa)
+    db.session.commit()
 
 def incluirimagembd(imagem_certa):
-    #link = "https://cinefilo-938c9-default-rtdb.firebaseio.com/imagem"
-    link = "https://cinefilo-938c9-default-rtdb.firebaseio.com/imagem/-NFAox2A4Qjvz4FRp6yo"
-    imagem = {'imagem': f"{imagem_certa}"}
-    requests.patch(f"{link}/.json", data=json.dumps(imagem))
+    pessoa = user(imagem_certa)
+    db.session.add(pessoa)
+    db.session.commit()
 
 
 
 def incluirnomebd(nome):
-    link = "https://cinefilo-938c9-default-rtdb.firebaseio.com/usuarios"
-    if nome != None:
-        add_nome = {'nome': f'{nome}', 'pontos': 0}
-        requests.post(f"{link}/.json", data=json.dumps(add_nome))
+    pessoa = user(nome)
+    db.session.add(pessoa)
+    db.session.commit()
 
 def pegarbd():
-    link = "https://cinefilo-938c9-default-rtdb.firebaseio.com/usuarios"
-    requisicao = requests.get(f"{link}.json")
-    dic_requisicao = requisicao.json()
-    return dic_requisicao
+    users = db.session.execute(db.select(user)).all()
+    return users
 
 def trazernomebd():
     nomes = pegarbd()

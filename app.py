@@ -1,8 +1,9 @@
 from flask import Flask, request, render_template, abort, redirect, url_for
 from function import soup, sort, receber, comparar, acerto_numero
 import random, json
-from banco import incluirfilmenobd, incluirnomebd, pegarbd, trazernomebd, incluirimagembd, pegarimagembd
 import requests
+#from banco_sql import incluirnomebd
+
 
 DEBUG = True
 app = Flask(__name__)
@@ -17,10 +18,10 @@ def home():
     nome = receber('nome')
 
     #inclui o nome e pontos no banco de dados, com pontos zerados.
-    incluirnomebd(nome)
+
 
     #busca o ultimo nome do banco de dados, para mostrar na tela.
-    nome = trazernomebd()
+
 
     #escolhe o numero para o sorteio do link entre 0-29
     escolha = sort()
@@ -29,15 +30,15 @@ def home():
     resposta = receber('resposta')
 
     #faz a comparação entre a resposta obtida e o titulo do filme no Banco de dados.
-    ganhador = comparar(resposta=resposta, nome=nome)
-    imagem_comparar = pegarimagembd()
+
+
 
     #lista com strings para buscar filmes e sinopses.
     imagem = str
     pedido = ["titulo", 'sinopse', imagem]
 
     #adicionando o link da imagem para mostrar no html, junto a resposta correta.
-    imagem = soup(pedido[2], escolha)
+    #imagem = soup(pedido[2], escolha)
 
     #inclui filme na lista atraves do Beautifulsoup.
     filme = soup(pedido[0], escolha)
@@ -47,18 +48,18 @@ def home():
 
     # condição para colocar o escolha abaixo de 9, precisa de melhoras.
     escolha = acerto_numero(escolha)
-    imagem = imagem[escolha]
-    incluirimagembd(imagem)
+
+
 
     #seleciona um filme e a sinopse, da lista de filmes, usando a variável escolha para fazer a seleção.
     filme = filme[escolha].text.title()
     sinopse = sinopse[escolha].text
 
     #incluir o titulo do filme no firebase(banco de dados)
-    incluirfilmenobd(filme)
+
 
     #render_template do arquivo html, e envia algumas variaveis para o html.
-    return render_template("cinefilo.html", ganhador=ganhador, filme=filme, sinopse=sinopse, resposta=resposta, nome=nome, imagem=imagem_comparar)
+    return render_template("cinefilo.html", filme=filme, sinopse=sinopse, resposta=resposta, nome=nome)
 
 
 @app.route('/sobre')

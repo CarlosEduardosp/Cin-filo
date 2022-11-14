@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import random
 from flask import request
-from banco import pontuacao, pegarpontos
+
 
 
 
