@@ -25,9 +25,10 @@
       <div class="header clearfix">
         <nav>
            <ul class="nav nav-pills pull-right">
-            <li role="presentation" class="active"><a href="{{url_for('home')}}">Inicio</a></li>
-            <li role="presentation"><a href="{{url_for('sobre')}}">Sobre</a></li>
-            <li role="presentation"><a href="{{url_for('contato')}}">Contato</a></li>
+            <li role="presentation" class="active"><a href="{{url_for('home', nome=nome)}}">Inicio</a></li>
+             <li role="presentation" class="active"><a href="{{url_for('login')}}">Sair</a></li>
+            <li role="presentation"><a href="{{url_for('sobre', nome=nome)}}">Sobre</a></li>
+            <li role="presentation"><a href="{{url_for('contato', nome=nome)}}">Contato</a></li>
 
           </ul>
         </nav>
@@ -49,7 +50,8 @@
 
       </div>
 
-         <div class="row marketing">
+          <footer class="pt-3 mt-4 text-muted border-top">
+      <div class="row marketing">
         <div class="col-lg-6">
           <h4>Cinéfilo 1.0</h4>
           <p>Leia a sinopse do filme e tente acertar o seu nome.</p>
@@ -69,9 +71,14 @@
 
          </div>
       </div>
-      <footer class="footer">
-        <p>&copy; 2022 Company.</p>
-      </footer>
+    </footer>
+  </div>
+</main>
+
+
+
+
+
 
     </div> <!-- /container -->
 

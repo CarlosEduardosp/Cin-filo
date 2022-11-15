@@ -1,27 +1,59 @@
-from flask import Flask, request, render_template, abort, redirect, url_for
+from flask import Flask, request, render_template, abort, redirect, url_for, session, flash
 from function import soup, sort, receber, comparar, acerto_numero
 import random, json
 import requests
-#from banco_sql import incluirnomebd
+from flask_sqlalchemy import SQLAlchemy
 
 
-DEBUG = True
 app = Flask(__name__)
-Debug = True
+
+# criando instancia do sqllite
+# Cria a extensão
+db = SQLAlchemy()
 
 
-@app.route('/', methods=["GET", "POST"])
-@app.route('/cinefilo', methods=["GET", "POST"])
-def home():
+# criar  a chave secreta com o comando = import os ; print(os.urandom(16))
 
-    #recebe o nome do fomulario html, do arquivo cinefilo.html
-    nome = receber('nome')
+app.secret_key = "b'\x10\xa2\x159\x94*\x03\xda{z\xb8.\x9f\xf0\x8b\xb2"
 
-    #inclui o nome e pontos no banco de dados, com pontos zerados.
+# configure the SQLite database, relative to the app instance folder
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///projeto.db"
+
+# initialize the app with the extension
+db.init_app(app)
+
+def consultar_db():
+    users = db.session.execute(db.select(user)).all()
+    for nome in users:
+        nomes = nome[0]
+    return nomes
+
+def incluirnomebd(nome, senha, pontos):
+    if nome:
+        pessoa = user(nome, senha, pontos)
+        db.session.add(pessoa)
+        db.session.commit()
 
 
-    #busca o ultimo nome do banco de dados, para mostrar na tela.
 
+class user(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String, unique=True, nullable=False)
+    senha = db.Column(db.String, unique=False, nullable=False)
+    pontos = db.Column(db.Integer, unique=False, nullable=True)
+
+
+    def __init__(self, nome, senha, pontos):
+        self.nome = nome
+        self.senha = senha
+        self.pontos = pontos
+
+
+
+
+@app.route("/cinefilo", defaults={'nome':'Usuário'})
+@app.route('/cinefilo/<nome>', methods=["GET", "POST"])
+def home(nome):
 
     #escolhe o numero para o sorteio do link entre 0-29
     escolha = sort()
@@ -32,13 +64,12 @@ def home():
     #faz a comparação entre a resposta obtida e o titulo do filme no Banco de dados.
 
 
-
     #lista com strings para buscar filmes e sinopses.
     imagem = str
     pedido = ["titulo", 'sinopse', imagem]
 
     #adicionando o link da imagem para mostrar no html, junto a resposta correta.
-    #imagem = soup(pedido[2], escolha)
+    imagem = soup(pedido[2], escolha)
 
     #inclui filme na lista atraves do Beautifulsoup.
     filme = soup(pedido[0], escolha)
@@ -49,33 +80,75 @@ def home():
     # condição para colocar o escolha abaixo de 9, precisa de melhoras.
     escolha = acerto_numero(escolha)
 
-
-
     #seleciona um filme e a sinopse, da lista de filmes, usando a variável escolha para fazer a seleção.
     filme = filme[escolha].text.title()
     sinopse = sinopse[escolha].text
+    imagem = imagem[escolha]
 
     #incluir o titulo do filme no firebase(banco de dados)
 
 
     #render_template do arquivo html, e envia algumas variaveis para o html.
-    return render_template("cinefilo.html", filme=filme, sinopse=sinopse, resposta=resposta, nome=nome)
+    return render_template("cinefilo.html", filme=filme, sinopse=sinopse, resposta=resposta, nome=nome, imagem=imagem)
 
 
-@app.route('/sobre')
-def sobre():
-    return render_template("sobre.html")
+@app.route('/sobre/<nome>')
+def sobre(nome):
+    return render_template("sobre.html", nome=nome)
 
 
-@app.route('/contato')
-def contato():
-    return render_template("contato.html")
+@app.route('/contato/<nome>')
+def contato(nome):
+    return render_template("contato.html", nome=nome)
 
-@app.route('/filmes')
-def filme():
+@app.route('/filmes/<nome>')
+def filme(nome):
     filmes = soup('titulo', 5)
     sinopse = soup('sinopse', 5)
-    return render_template('filmes.html', filmes=filmes, sinopse=sinopse)
+    return render_template('filmes.html', filmes=filmes, sinopse=sinopse,nome=nome)
+
+@app.route('/', methods=["GET", "POST"])
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    nome = receber('nome')
+    senha = receber('password')
+    pontos = 0
+    if nome and senha:
+        incluirnomebd(nome, senha, pontos)
+        cadastro = f'{nome} foi cadastrado com sucesso.'
+    else:
+        cadastro = ''
+    return render_template('login.html', nome=nome, senha=senha, cadastro=cadastro)
+
+@app.route('/logar', methods=['GET', 'POST'])
+def logar():
+    nome = receber('nome')
+    senha = receber('password')
+
+    #fazer a verificação de usuário para entrada no sistema
+    users = db.session.execute(db.select(user)).all()
+
+
+    for pessoa in users:
+        if nome:
+            if nome.title() == pessoa[0].nome:
+                if senha == pessoa[0].senha:
+                    resultado = pessoa[0].nome
+                    return redirect(f'cinefilo/{resultado}')
+                else:
+                    resultado = 'Senha Inválida !! tente outra vez !!'
+            else:
+                resultado = 'Usuário não cadastrado!! Favor cadastrar primeiro!!'
+        else:
+            resultado = 'Nenhum valor válido foi digitado'
+
+    return render_template('login.html', users=users, resultado=resultado, nome=nome)
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
+    with app.app_context():
+        db.create_all()
+

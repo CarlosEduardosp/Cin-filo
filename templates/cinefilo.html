@@ -25,47 +25,40 @@
       <div class="header clearfix">
         <nav>
           <ul class="nav nav-pills pull-right">
-            <li role="presentation" class="active"><a href="{{url_for('home')}}">Inicio</a></li>
-            <li role="presentation"><a href="{{url_for('sobre')}}">Sobre</a></li>
-            <li role="presentation"><a href="{{url_for('contato')}}">Contato</a></li>
+            <li role="presentation" class="active"><a href="{{url_for('home', nome=nome)}}">Inicio</a></li>
+            <li role="presentation" class="active"><a href="{{url_for('login')}}">Sair</a></li>
+            <li role="presentation"><a href="{{url_for('sobre', nome=nome)}}">Sobre</a></li>
+            <li role="presentation"><a href="{{url_for('contato', nome=nome)}}">Contato</a></li>
 
           </ul>
         </nav>
         <h3 class="text-muted">Cinéfilo - A Magia do Cinema em Você</h3>
       </div>
 
-        <div >
 
-        <form class="form-inline" action="{{url_for('home')}}" method='POST'>
-            <div class="form-group mx-sm-3 mb-2">
-            <h3 class="text-muted"></h3>
-              <h3>Nome de Usuário:
-            <input type="text" class="form-control" name="nome" placeholder="Digite seu nome de usuário aqui">
-                <button type="submit" class="btn btn-primary"  required>Iniciar</button></h3>
-            </div>
-        </form>
-      </div>
 
       <div class="jumbotron" >
 
         <h1>{{nome}}, Sabe qual é o filme? </h1>
-        <br> <img src="#" class="img-thumbnail" alt="Este filme não possui imagem disponível." style='float:right' width="200"><br>
+        <br> <img src="{{imagem}}" class="img-thumbnail" alt="Este filme não possui imagem disponível." style='float:right' width="200"><br>
         <p class="lead">{{sinopse}}
 
         <p></p>
 
-        <form class="form-inline" action="{{url_for('home')}}" method='POST'>
+        <form class="form-inline" action="{{url_for('home', nome=nome)}}" method='POST'>
             <div class="form-group mx-sm-3 mb-2">
             <h3 class="text-muted">Sobre Qual Filme é esta Sinopse?</h3>
             <input type="text" class="form-control" name="resposta" placeholder="Resposta">
             <button type="submit" class="btn btn-primary" required>Confirmar Resposta ou Avançar</button>
               <h6>* coloque as palavras com seus respectivos acentos ortográficos.</h6>
              </div>
+           <br>
 
+          <br>
+          {{resposta}}
 
         </form>
-
-        <h6 style="float:right">* Imagem da sinopse anterior.</h6>
+       <h6  src="" style="float:right">* Imagem da sinopse anterior.</h6>
 
 
         <br>
@@ -76,6 +69,7 @@
 
 
 
+      <footer class="pt-3 mt-4 text-muted border-top">
       <div class="row marketing">
         <div class="col-lg-6">
           <h4>Cinéfilo 1.0</h4>
@@ -96,11 +90,14 @@
 
          </div>
       </div>
+    </footer>
+  </div>
+</main>
 
-      <footer class="footer">
-        <p>&copy; 2022 Company.</p>
-      </footer>
 
+
+  </body>
+</html>
     </div> <!-- /container -->
 
 
