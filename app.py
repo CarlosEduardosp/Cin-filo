@@ -3,6 +3,8 @@ from function import soup, sort, receber, comparar, acerto_numero
 import random, json
 import requests
 from flask_sqlalchemy import SQLAlchemy
+from tinydb import TinyDB, Query
+
 
 
 app = Flask(__name__)
@@ -21,6 +23,11 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///projeto.db"
 
 # initialize the app with the extension
 db.init_app(app)
+
+#criando banco nosql
+banco = TinyDB('db.json')
+query = Query()
+
 
 def consultar_db():
     users = db.session.execute(db.select(user)).all()
@@ -62,7 +69,11 @@ def home(nome):
     resposta = receber('resposta')
 
     #faz a comparação entre a resposta obtida e o titulo do filme no Banco de dados.
-
+    bancofilme = banco.all()
+    resultado = comparar(resposta, bancofilme[0]['filme'])
+    teste = len(str(resposta))
+    if teste == 4:
+        flash('Nenhuma resposta foi digitada.'.title())
 
     #lista com strings para buscar filmes e sinopses.
     imagem = str
@@ -85,11 +96,19 @@ def home(nome):
     sinopse = sinopse[escolha].text
     imagem = imagem[escolha]
 
-    #incluir o titulo do filme no firebase(banco de dados)
+    #recupera os dados do banco de dados.
+    bancofilme = banco.all()
+
+    #salvando a imagem do filme anterio para mostrar junto a resposta
+    imagem_anterior = bancofilme[0]['imagem']
+
+    #atualizando o banco com a resposta, para a próxima pergunta
+    banco.update({'filme': f'{filme}', 'imagem': f'{imagem}'})
+
 
 
     #render_template do arquivo html, e envia algumas variaveis para o html.
-    return render_template("cinefilo.html", filme=filme, sinopse=sinopse, resposta=resposta, nome=nome, imagem=imagem)
+    return render_template("cinefilo.html", filme=filme,resultado=resultado , teste=teste, sinopse=sinopse, nome=nome, imagem=imagem_anterior)
 
 
 @app.route('/sobre/<nome>')
@@ -141,7 +160,6 @@ def logar():
                 resultado = 'Usuário não cadastrado!! Favor cadastrar primeiro!!'
         else:
             resultado = 'Nenhum valor válido foi digitado'
-
     return render_template('login.html', users=users, resultado=resultado, nome=nome)
 
 

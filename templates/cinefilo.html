@@ -49,13 +49,32 @@
             <div class="form-group mx-sm-3 mb-2">
             <h3 class="text-muted">Sobre Qual Filme é esta Sinopse?</h3>
             <input type="text" class="form-control" name="resposta" placeholder="Resposta">
-            <button type="submit" class="btn btn-primary" required>Confirmar Resposta ou Avançar</button>
+            <button type="submit" class="btn btn-primary" required>Confirmar ou Avançar</button>
               <h6>* coloque as palavras com seus respectivos acentos ortográficos.</h6>
              </div>
            <br>
+          {%- for mensagem in get_flashed_messages() %}
+          {%- if 'Você Acertou!!' in mensagem %}
+          <div class="alert alert-success">
+          {{mensagem}}
+          </div>
 
-          <br>
-          {{resposta}}
+          {%- elif 'Você Errou!!' in mensagem %}
+          <div class="alert alert-danger">
+          {{mensagem}}
+          </div>
+
+          {%- elif teste == 4 %}
+          <div class="alert alert-warning">
+          {{mensagem}}
+          </div>
+          {%- endif %}
+          {%- endfor %}
+
+
+
+
+
 
         </form>
        <h6  src="" style="float:right">* Imagem da sinopse anterior.</h6>
@@ -76,8 +95,8 @@
           <p>Leia a sinopse do filme e tente acertar o seu nome.</p>
 
           <h4>Ferramentas:</h4>
-          <p>Criado em Flask com Python, Ultilizando biblioteca de Wabscraping para buscar as informações sobre os filmes.
-            Bootstrap - para Front-End, e Firebase como Banco de dados.</p>
+          <p>Criado em Flask com Python, Ultilizando biblioteca de Web Scraping para buscar as informações sobre os filmes.
+            Bootstrap - para Front-End, e Banco de dados relacional com SQLAlchemy</p>
 
           </div>
 

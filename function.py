@@ -1,32 +1,21 @@
 import requests
 from bs4 import BeautifulSoup
 import random
-from flask import request
+from flask import request, flash
 
 
 
 
 
-def comparar(resposta, nome):
-    link = "https://cinefilo-938c9-default-rtdb.firebaseio.com/-NEmjtP_bkZLZfkK0yEL"
-    requisicao = requests.get(f"{link}.json")
-    dic_requisicao = requisicao.json()
+def comparar(resposta, filme):
+    resposta = str(resposta)
 
+    if resposta or resposta != None:
+        if resposta in filme:
+            flash('Aeeeehh - Você Acertou!!   confira na imagem ao lado sua resposta.'.title())
+        elif resposta not in filme and len(resposta) > 4:
+            flash(f'Você Errou!! Sua resposta: {resposta}, Resposta correta: {filme}')
 
-    resposta = str(resposta).title()
-    comp = str(dic_requisicao['nome'])
-    for i in comp:
-        if resposta == 'none' or resposta == 'None':
-            return ''
-        else:
-            if resposta in comp:
-                pontos = pontuacao(nome)
-                return f"{nome},  Parabéns !! Você Acertou. Sua resposta foi: {resposta}, e o correto era: {comp}. {pontos} Pontos."
-            #alterar os pontos no bd, neste campo.
-
-            else:
-                pontos = pegarpontos(nome)
-                return f"Resposta errada {nome} !! Sua resposta foi: {resposta}, e o correto era: {comp}. {pontos} Pontos"
 
 
 def receber(nome):
