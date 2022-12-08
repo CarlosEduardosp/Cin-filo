@@ -10,9 +10,10 @@ from flask import request, flash
 def comparar(resposta, filme):
     resposta = str(resposta)
 
-    if resposta or resposta != None:
+    if resposta != None:
         if resposta in filme:
-            flash('Aeeeehh - Você Acertou!!   confira na imagem ao lado sua resposta.'.title())
+            resultado = int(10)
+            return resultado
         elif resposta not in filme and len(resposta) > 4:
             flash(f'Você Errou!! Sua resposta: {resposta}, Resposta correta: {filme}')
 
@@ -26,9 +27,9 @@ def receber(nome):
             return resposta
 
 
-def soup(pedido, escolha):
+def soup(pedido,escolha):
 
-    link = pagina(escolha)
+    link = f"https://www.adorocinema.com/filmes/melhores/?page={escolha}"
 
     page = requests.get(link)
 
@@ -44,7 +45,7 @@ def soup(pedido, escolha):
     elif pedido == "sinopse":
         sinopse = soup.find_all("div", class_='synopsis')
         return sinopse
-    else:
+    elif pedido != "titulo" and pedido != "sinopse":
         imagem = soup.find_all("img", class_="thumbnail-img")
         listadeimagens = []
         for link in imagem:
@@ -52,22 +53,7 @@ def soup(pedido, escolha):
         return listadeimagens
 
 
-
-
-
-
 def sort():
-    num = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29]
+    num = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     return random.choice(num)
 
-
-def pagina(escolha):
-    return f"https://www.adorocinema.com/filmes/melhores/?page={escolha}"
-
-def acerto_numero(escolha):
-    if escolha > 9:
-        num = [0,1,2,3,4,5,6,7,8,9]
-        novo_escolha = random.choice(num)
-        return novo_escolha
-    else:
-        return escolha

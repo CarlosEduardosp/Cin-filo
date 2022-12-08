@@ -1,10 +1,10 @@
 from flask import Flask, request, render_template, abort, redirect, url_for, session, flash
-from function import soup, sort, receber, comparar, acerto_numero
+from function import soup, sort, receber, comparar
 import random, json
 import requests
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, query
 from tinydb import TinyDB, Query
-
+import urllib.request
 
 
 app = Flask(__name__)
@@ -62,8 +62,9 @@ class user(db.Model):
 @app.route('/cinefilo/<nome>', methods=["GET", "POST"])
 def home(nome):
 
-    #escolhe o numero para o sorteio do link entre 0-29
+    #escolhe o numero para o sorteio do link entre 0-9
     escolha = sort()
+
 
     # função que recebe a resposta do usuário.
     resposta = receber('resposta')
@@ -71,30 +72,37 @@ def home(nome):
     #faz a comparação entre a resposta obtida e o titulo do filme no Banco de dados.
     bancofilme = banco.all()
     resultado = comparar(resposta, bancofilme[0]['filme'])
-    teste = len(str(resposta))
-    if teste == 4:
-        flash('Nenhuma resposta foi digitada.'.title())
+    if resultado == 10:
+        users = db.session.execute(db.select(user)).all()
+        for pessoas in users:
+            if nome == pessoas[0].nome:
+                resultado = pessoas[0].pontos + resultado
+                #para atualizar o banco de dados, utilizar o nome da classe = user.
+                user.query.filter_by(nome=nome).update({"nome": nome, "pontos": resultado})
+                db.session.commit()
+                flash(f'Aeeeehh - Você Acertou!! e ganhou {10} Pontos. Confira na imagem ao lado sua resposta. Total de {pessoas[0].pontos} Pontos.'.title())
 
-    #lista com strings para buscar filmes e sinopses.
-    imagem = str
-    pedido = ["titulo", 'sinopse', imagem]
+    teste = len(str(resposta))
+
+    pedido = ['titulo','sinopse','imagem']
 
     #adicionando o link da imagem para mostrar no html, junto a resposta correta.
-    imagem = soup(pedido[2], escolha)
+    imagem = soup(pedido[2],escolha)
 
     #inclui filme na lista atraves do Beautifulsoup.
-    filme = soup(pedido[0], escolha)
+    filme = soup(pedido[0],escolha)
 
     #inclui sinopse na lista atraves do Beautiful soup.
-    sinopse = soup(pedido[1], escolha)
+    sinopse = soup(pedido[1],escolha)
 
-    # condição para colocar o escolha abaixo de 9, precisa de melhoras.
-    escolha = acerto_numero(escolha)
+
 
     #seleciona um filme e a sinopse, da lista de filmes, usando a variável escolha para fazer a seleção.
     filme = filme[escolha].text.title()
     sinopse = sinopse[escolha].text
     imagem = imagem[escolha]
+
+
 
     #recupera os dados do banco de dados.
     bancofilme = banco.all()
@@ -102,7 +110,7 @@ def home(nome):
     #salvando a imagem do filme anterio para mostrar junto a resposta
     imagem_anterior = bancofilme[0]['imagem']
 
-    #atualizando o banco com a resposta, para a próxima pergunta
+    # atualizando o banco com a resposta, para a próxima pergunta
     banco.update({'filme': f'{filme}', 'imagem': f'{imagem}'})
 
 
